@@ -1,0 +1,31 @@
+#!/bin/bash
+#
+# Check on the origin of the current branch for changes and reset hard
+#
+# Usage:
+# Just run `origin-reset` in a GIT repo and you will be prompted
+# to reset HARD the current branch with the origin one
+
+# Source utilities
+. script-utils
+
+# Check if the current path is a GIT repo
+git rev-parse 2> /dev/null;
+check_exit_status "If this was a GIT repo, that would be great"
+
+# Get current branch
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+# Set origin
+ORIGIN="origin/$BRANCH"
+
+echo "You are about to reset with $ORIGIN"
+
+while true; do
+  read -p "Are you sure: [y/N] " RESP
+  case $RESP in
+    [Yy]* ) git fetch && git reset --hard $ORIGIN && break;;
+    [Nn]* | '' ) exit;;
+    * ) echo "It's a simple yes or no pal. You can do it.";;
+  esac
+done

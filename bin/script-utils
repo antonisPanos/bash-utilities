@@ -1,0 +1,20 @@
+#!/bin/bash
+#
+# Utilities for bash scripts
+
+###################################################
+# Check last exit status and in case it wasn't 
+# successful exit the script and show a message
+# if provided.
+#
+# Arguments:
+#   Error message, string
+###################################################
+
+check_exit_status () {
+  [[ $? -eq 0 ]] && return
+
+  echo "ERROR: ${1:-Process failed!}"
+  echo "Exiting.."
+  exit 1
+}
