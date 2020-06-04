@@ -10,8 +10,7 @@
 . script-utils
 
 # Check if the current path is a GIT repo
-git rev-parse 2> /dev/null;
-check_exit_status "If this was a GIT repo, that would be great"
+is_this_a_repo
 
 # Get current branch
 BRANCH=$(git rev-parse --abbrev-ref HEAD)

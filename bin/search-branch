@@ -1,0 +1,37 @@
+#!/bin/bash
+#
+# Search for a branch and checkout with ease and style
+#
+# Usage:
+# Just run `search-branch` in a GIT repo and you will be prompted
+# with all the branches that match the criteria. You can then select
+# a branch from the menu and the script will checkout for you
+
+# Source utilities
+. script-utils
+
+# Check if the current path is a GIT repo
+is_this_a_repo
+
+# Check for argument
+[ -z "$1" ] && echo "Am I supposed to guess the branch myself?" && exit
+
+# Filter the branches based on input, remove unnecessary, curate their names and remove duplicates
+echo "Fetching..."
+BRANCHES=$(git fetch 2> /dev/null && git branch -a | grep "$1" | grep -v '*\|HEAD' | sed -e 's/remotes\/origin\///g'  | tr ' ' '\n' | sort | uniq | xargs)
+
+# Check if something was found otherwise exit
+[ -z "$BRANCHES" ] && echo "Nothing found.." && exit
+
+# Create options of the branches that match
+echo -e "\nPick a branch:"
+select OPTION in $BRANCHES
+do
+  if [[ -n $OPTION ]]
+  then
+    git checkout $OPTION
+    break
+  else
+    echo This was never a choice.
+  fi
+done

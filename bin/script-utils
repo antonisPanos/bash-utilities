@@ -18,3 +18,15 @@ check_exit_status () {
   echo "Exiting.."
   exit 1
 }
+
+###################################################
+# Check if this is a GIT repository
+#
+# Arguments:
+#   Error message, string
+###################################################
+
+is_this_a_repo () {
+  git rev-parse 2> /dev/null
+  check_exit_status "${1:-If this was a GIT repo, that would be great}"
+}
