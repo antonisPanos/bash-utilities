@@ -1,0 +1,41 @@
+#!/bin/bash
+#
+# Check and output how many commits is the current branch
+# behind/ahead from origin/develop or some other branch
+#
+# Usage:
+# Just run `commit-diff` in a GIT repo with or without 
+# another branch as an argument. If a branch isn't provided
+# 'origin/develop' will be used for comparison
+
+# Source utilities
+. script-utils
+
+# Check if the current path is a GIT repo
+is_this_a_repo
+
+BLUE='\033[01;34m'
+NO_COLOR='\033[0m'
+COMPARING_BRANCH=${1:-origin/develop}
+
+# Fetch changes in origin
+echo "Fetching..."
+git fetch &> /dev/null
+
+# Check if the comparing branch exists
+git show-branch $COMPARING_BRANCH &> /dev/null
+check_exit_status "Comparing branch, $COMPARING_BRANCH, doesn't exist"
+
+# Get current branch name from GIT
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+# Count difference
+DIFF=$(git rev-list --left-right --count  "$COMPARING_BRANCH...$CURRENT_BRANCH" | awk -v blueC=$BLUE -v whiteC=$NO_COLOR '{print ""blueC$1whiteC" commits behind - "blueC$2whiteC" commits ahead"}')
+
+cat <<End-of-print
+
+* $CURRENT_BRANCH is, 
+* $DIFF, 
+* from $COMPARING_BRANCH
+
+End-of-print
